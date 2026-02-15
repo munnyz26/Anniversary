@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>សុជាតា 💞 បូរ៉ា</title>
+
+<style>
+  :root{
+    --ink:#2a0b2f;          /* dark purple for readability */
+    --ink2:#3a1240;
+    --glass: rgba(255,255,255,.78);
+    --glass2: rgba(255,255,255,.58);
+    --pink1:#ff66b3;
+    --pink2:#ffb6d8;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Khmer","Khmer OS","Battambang",Arial;
+    color:var(--ink);
+    background:
+      linear-gradient(135deg, rgba(255,220,240,.65), rgba(255,160,210,.55)),
+      url("flowers.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+
+  .vignette{
+    position:fixed; inset:0;
+    background: radial-gradient(circle at center, rgba(255,255,255,.10), rgba(0,0,0,.22));
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ====== COVER (Step 1) ====== */
+  #cover{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    z-index:50;
+  }
+  .coverCard{
+    width:min(760px,92vw);
+    background: var(--glass2);
+    border:1px solid rgba(255,255,255,.85);
+    border-radius:28px;
+    padding:28px 20px;
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.22);
+    backdrop-filter: blur(10px);
+  }
+  .coverTop{
+    font-size:22px; letter-spacing:3px; opacity:.95;
+  }
+  .coverTitle{
+    font-size:40px; font-weight:900;
+    margin:10px 0 8px;
+    color:var(--ink);
+    text-shadow:0 2px 0 rgba(255,255,255,.75);
+  }
+  .coverSub{
+    font-size:14px; color:var(--ink2); opacity:.95;
+    margin:0 0 16px;
+  }
+  #openBtn{
+    border:none;
+    cursor:pointer;
+    padding:12px 18px;
+    border-radius:999px;
+    font-weight:900;
+    font-size:16px;
+    color:#fff;
+    background: linear-gradient(135deg, var(--pink1), var(--pink2));
+    box-shadow:0 18px 45px rgba(255,80,160,.25);
+  }
+  #openBtn:active{ transform:scale(.98); }
+  .tiny{
+    margin-top:10px;
+    font-size:12px;
+    color:rgba(42,11,47,.75);
+  }
+
+  /* ====== FLYING LAYER (Step 2 animation) ====== */
+  #layer{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:10;
+    overflow:hidden;
+  }
+  .fly{
+    position:fixed; left:0; top:0;
+    user-select:none;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 10px 18px rgba(255,90,170,.22));
+    opacity:.9;
+  }
+
+  /* ====== STAGE (Big heart + text) ====== */
+  #stage{
+    position:fixed; inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    opacity:0;
+    transform:scale(.98);
+    transition: opacity 1s ease, transform 1s ease;
+    pointer-events:none;
+  }
+  #stage.show{
+    opacity:1;
+    transform:scale(1);
+    pointer-events:auto;
+  }
+
+  .heartWrap{
+    width:min(920px,94vw);
+    height:min(720px,84vh);
+    position:relative;
+  }
+
+  /* Big SVG heart background */
+  .heartSvg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    filter: drop-shadow(0 28px 80px rgba(0,0,0,.22));
+  }
+
+  /* Content sits on top, NOT rotated */
+  .content{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+  }
+
+  .contentCard{
+    width:min(620px,90vw);
+    background: var(--glass);
+    border:1px solid rgba(255,255,255,.92);
+    border-radius:24px;
+    padding:18px 18px 16px;
+    backdrop-filter: blur(10px);
+    box-shadow:0 18px 55px rgba(0,0,0,.12);
+  }
+
+  .names{
+    text-align:center;
+    font-size:34px;
+    font-weight:900;
+    color:var(--ink);
+    margin:4px 0 8px;
+  }
+
+  .badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:999px;
+    background: rgba(255,120,190,.16);
+    border:1px solid rgba(255,120,190,.28);
+    font-weight:900;
+    color:var(--ink2);
+  }
+
+  .meta{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:14px;
+  }
+
+  .msg{
+    font-size:15.8px;
+    line-height:1.95;
+    color:var(--ink);
+  }
+  .msg b{ font-weight:900; }
+
+  .footer{
+    text-align:center;
+    margin-top:12px;
+    font-size:14.8px;
+    color:var(--ink2);
+    font-weight:900;
+  }
+
+  /* replay */
+  #replay{
+    position:fixed;
+    right:14px;
+    bottom:14px;
+    z-index:30;
+    display:none;
+  }
+  #replay button{
+    border:none;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:999px;
+    font-weight:900;
+    color:var(--ink);
+    background: rgba(255,255,255,.75);
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:0 14px 40px rgba(0,0,0,.15);
+  }
+</style>
+</head>
+
+<body>
+<div class="vignette"></div>
+
+<!-- COVER -->
+<div id="cover">
+  <div class="coverCard">
+    <div class="coverTop">🌸🌷💮🪷💗💖💞🪷💮🌷🌸</div>
+    <div class="coverTitle">សុជាតា 💞 បូរ៉ា</div>
+    <div class="coverSub">ចុច “បើក ❤️” ម្តងទៀត ដើម្បីបើក surprise 💗</div>
+    <button id="openBtn" type="button">បើក ❤️</button>
+    <div class="tiny">ដាក់រូប background ឈ្មោះ <b>flowers.jpg</b> ក្នុង folder ដូច index.html</div>
+  </div>
+</div>
+
+<!-- FLYING -->
+<div id="layer"></div>
+
+<!-- STAGE -->
+<div id="stage">
+  <div class="heartWrap">
+
+    <!-- SVG HEART (cute pink) -->
+    <svg class="heartSvg" viewBox="0 0 1000 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff7fb"/>
+          <stop offset="0.55" stop-color="#ffe0f0"/>
+          <stop offset="1" stop-color="#ffd0e8"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="50%" cy="35%" r="65%">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+          <stop offset="1" stop-color="#ff9fcb" stop-opacity="0.20"/>
+        </radialGradient>
+      </defs>
+
+      <!-- soft glow -->
+      <path d="M500 785
+               C200 620, 85 450, 120 300
+               C160 130, 360 110, 500 250
+               C640 110, 840 130, 880 300
+               C915 450, 800 620, 500 785 Z"
+            fill="url(#glow)" opacity="0.65"/>
+
+      <!-- main heart -->
+      <path d="M500 780
+               C205 615, 95 445, 130 305
+               C170 140, 360 125, 500 260
+               C640 125, 830 140, 870 305
+               C905 445, 795 615, 500 780 Z"
+            fill="url(#g)" stroke="rgba(255,255,255,.85)" stroke-width="8"/>
+    </svg>
+
+    <!-- TEXT (not rotated) -->
+    <div class="content">
+      <div class="contentCard">
+        <div class="names">សុជាតា 💞 បូរ៉ា</div>
+
+        <div class="meta">
+          <span class="badge">💗 15 May 2024 → 15 Feb 2026 • 1 ឆ្នាំ 9 ខែ 💗</span>
+        </div>
+
+        <div class="msg">
+          បើនិយាយតាមត្រង់… <b>បងពិតជាស្រលាញ់អូនខ្លាំងណាស់</b>។<br>
+          ចាប់ពី <b>15 May 2024</b> មក វាមិនមែនស្នេហាបែប show off ទេ—
+          វាគឺស្នេហាបែប <b> Gen Z ប៉ុន្តែស្នេហានេះមិនមែនដូច Gen Z ដទៃដែលអាចយកលេងសើចបានទេ មិនមែន មួយថ្ងៃ មួយខែ ឬក៏ មួយឆ្នាំទេ ( គឺអាចមួយជីវិត ពាក្យនេះអាចស្តាប់ទៅ មានអារម្មណ៍ថាមិនអាច តែបងនឹងព្យាយាមធ្វើឲវាចេញជាលទ្ធផលដែល អូនចង់បាន ហើយបងក៏ចង់បាន នៅថ្ងៃណាមួយ )</b>
+          ជាចុងក្រោយបងធ្វើនេះឡើងគឺចេញពីចិត្ត ចេញពីក្តីស្រលាញ់ដែលបងមានចំពោះអូន<br><br>
+
+          <b>15 Feb 2026</b> នេះ ខ្ញុំចង់ប្រាប់ថា៖
+          “អូនគឺជាមនុស្សដែលបងស្រលាញ់ខ្លាំង” 💞<br>
+          យើងបន្តទៅមុខជាមួយគ្នា… ទោះបីរាងយឺតៗបន្ទិច តែឈានទៅមុខជានិច្ច 🌷
+        </div>
+
+        <div class="footer">💞 ស្នេហាឈ្លោះគ្នារាល់ថ្ងៃ Everyday — But love Forever 💞</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="replay">
+  <button id="replayBtn" type="button">មើលម្តងទៀត ♻️</button>
+</div>
+
+<script>
+  // ====== CONFIG ======
+  const EMOJIS = ["🌸","🌷","💮","🪷","💗","💖","💞","💕","✨"];
+  const TOTAL = 220;
+  const FLY_MS = 6500;     // fly cute longer
+  const GATHER_MS = 2600;  // gather to center
+  const REVEAL_AT = FLY_MS + GATHER_MS;
+
+  const cover = document.getElementById("cover");
+  const openBtn = document.getElementById("openBtn");
+  const layer = document.getElementById("layer");
+  const stage = document.getElementById("stage");
+  const replay = document.getElementById("replay");
+  const replayBtn = document.getElementById("replayBtn");
+
+  const rand = (a,b)=>Math.random()*(b-a)+a;
+  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  let items = [];
+  let running = false;
+  let t0 = 0;
+  let raf = null;
+
+  function clearItems(){
+    layer.innerHTML = "";
+    items = [];
+  }
+
+  function spawn(){
+    clearItems();
+    for(let i=0;i<TOTAL;i++){
+      const el = document.createElement("div");
+      el.className = "fly";
+      el.textContent = pick(EMOJIS);
+      el.style.fontSize = rand(14,34) + "px";
+      el.style.opacity = rand(.35,.95);
+      layer.appendChild(el);
+
+      items.push({
+        el,
+        x: rand(0, innerWidth),
+        y: rand(0, innerHeight),
+        vx: rand(-1.8, 1.8),
+        vy: rand(-1.6, 1.6),
+        rot: rand(-180, 180),
+        spin: rand(-2.2, 2.2)
+      });
+    }
+  }
+
+  function animate(){
+    if(!running) return;
+
+    const t = performance.now() - t0;
+    const cx = innerWidth/2;
+    const cy = innerHeight/2;
+
+    if(t < FLY_MS){
+      for(const it of items){
+        it.x += it.vx;
+        it.y += it.vy;
+        it.rot += it.spin;
+
+        if(it.x < -40 || it.x > innerWidth + 40) it.vx *= -1;
+        if(it.y < -40 || it.y > innerHeight + 40) it.vy *= -1;
+
+        it.el.style.transform = `translate(${it.x}px,${it.y}px) rotate(${it.rot}deg)`;
+      }
+    } else if(t < REVEAL_AT){
+      const p = (t - FLY_MS) / GATHER_MS;
+      const k = 0.012 + p*0.035;
+      for(const it of items){
+        it.x += (cx - it.x) * k;
+        it.y += (cy - it.y) * k;
+        it.rot += it.spin;
+
+        it.el.style.transform = `translate(${it.x}px,${it.y}px) rotate(${it.rot}deg)`;
+        it.el.style.opacity = (1 - p) * 0.85;
+      }
+    } else {
+      running = false;
+      stage.classList.add("show");
+      replay.style.display = "block";
+      for(const it of items) it.el.style.opacity = "0";
+      return;
+    }
+
+    raf = requestAnimationFrame(animate);
+  }
+
+  function startShow(){
+    cover.style.display = "none";
+    stage.classList.remove("show");
+    replay.style.display = "none";
+    spawn();
+    running = true;
+    t0 = performance.now();
+    if(raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(animate);
+  }
+
+  openBtn.addEventListener("click", startShow);
+  replayBtn.addEventListener("click", startShow);
+</script>
+
+</body>
+</html>
